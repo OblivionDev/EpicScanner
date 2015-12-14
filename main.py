@@ -14,34 +14,34 @@
 # Are we doing a Drupal scanner specificly or are we just writing a fuzzer?
 # Alright I'll add my shit to it later for what i need for tomorrow xD - Just ignore my notes ;D
 #  Okay mantis ;)
-import os
+import inspect, os
 import commands
 import urllib2
 import re
 
 debug = True
 
-print " Welcome to the most EPIC scanner ever, written by masterminds (Mantis, Oblivion)\n" # 
-target = raw_input('Enter your target: ') # http://example.com 
+print "Welcome to the most EPIC scanner ever, written by masterminds (Mantis, Oblivion)\n" # 
+target = raw_input('Enter your target (and port if neccessary): ') # http://example.com  
 uri = raw_input('Enter the target URI: ') # /xmlrpc.php or whatever
 print "NOTE: Every payload has to be on a newline!" # NOTE for dummies 
 payload_file = raw_input('Enter the path to a payload file (or leave blank for default): ') 
 
-if(len(payload_file)): # Check if it was passed in
-    payload_file = './payloads/full.payloads.txt'
+if(len(payload_file) == 0): # Check if it was passed in
+    payload_file = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/payloads/full.payloads.txt'
 
-payloads = open(payload_file).read() # Todo: add error checking
+payloads = open(payload_file).readlines() # Todo: add error checking
 url = target + uri
 
 print "Looping payloads."
 
-for i in payloads:
-    print payloads[i] if debug else '' # Checking if payloads are ready to fire!
-    
-    request = urllib2.open(url, payloads[i]) # I believe that makes it a POST rather than a GET
+for payload in payloads:
+    print payload
+
+    request = urllib2.urlopen(url, payload) # I believe that makes it a POST rather than a GET
     response = request.read()
 
-    if(re.search('/.?('+payloads[i]+')/i', response)): # That'll do as a test I reckon? ehm don't think so, responses differ for reguests for example
+    if(re.search('/.?('+payload+')/i', response)): # That'll do as a test I reckon? ehm don't think so, responses differ for reguests for example
         print " Vulnerability found at >  %s \n Response:\n %s " % (url, response) 
     else: 
         print "That's too bad! h4x0rb0t couldn't find any vulns * cries in a corner * \n" #haha i'm so creative 
