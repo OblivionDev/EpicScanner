@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<methodCall>
+   <methodName>user.login</methodName>
+   <params>
+     <param>
+        <value><string>%s</string></value>
+     </param>
+    <param>
+        <value><string>%s</string></value>
+     </param>
+   </params>
+</methodCall>
