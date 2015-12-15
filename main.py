@@ -19,31 +19,40 @@ import commands
 import urllib2
 import re
 
-debug = True
-
 print "Welcome to the most EPIC scanner ever, written by masterminds (Mantis, Oblivion)\n" # 
+
 target = raw_input('Enter your target (and port if neccessary): ') # http://example.com  
 uri = raw_input('Enter the target URI: ') # /xmlrpc.php or whatever
+
 print "NOTE: Every payload has to be on a newline!" # NOTE for dummies 
-payload_file = raw_input('Enter the path to a payload file (or leave blank for default): ') 
+fuzz_file = raw_input('Enter the path to a fuzzing file (or leave blank for default): ') 
 
-if(len(payload_file) == 0): # Check if it was passed in
-    payload_file = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/payloads/full.payloads.txt'
+if(len(fuzz_file) == 0): # Check if it was passed in
+    fuzz_file = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/payloads/full.payloads.txt'
 
-payloads = open(payload_file).readlines() # Todo: add error checking
+payload_file = raw_input("Enter your payload file:")
+
+fuzz_items = open(fuzz_file).readlines() 
 url = target + uri
 
-print "Looping payloads."
+prefuzzed_request = ''
+with open(payload_file, 'r') as payload:
+    prefuzzed_request = payload.read()
 
-for payload in payloads:
-    print payload
+# TODO:
+## Need to add Sniper and BatteringRam options (Burp Intruder style) 
 
-    request = urllib2.urlopen(url, payload) # I believe that makes it a POST rather than a GET
+for fuzz_item in fuzz_items:
+
+    fuzzed_request = prefuzzed_request.replace('{{PAYLOAD}}', fuzz_item)
+    request = urllib2.urlopen(url, fuzzed_request) # I believe that makes it a POST rather than a GET
     response = request.read()
 
-    if(re.search('/.?('+payload+')/i', response)): # That'll do as a test I reckon? ehm don't think so, responses differ for reguests for example
-        print " Vulnerability found at >  %s \n Response:\n %s " % (url, response) 
-    else: 
-        print "That's too bad! h4x0rb0t couldn't find any vulns * cries in a corner * \n" #haha i'm so creative 
+    print response
+
+    # if(re.search('/.?('+fuzz_item+')/i', response)): # That'll do as a test I reckon? ehm don't think so, responses differ for reguests for example
+    #     print " Vulnerability found at >  %s \n Response:\n %s " % (url, response) 
+    # else: 
+    #     print "That's too bad! h4x0rb0t couldn't find any vulns * cries in a corner * \n" #haha i'm so creative 
 
 print 'Finished :>'
