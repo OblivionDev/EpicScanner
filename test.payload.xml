@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <methodCall>
-   <methodName>user.login</methodName>
+   <methodName>{{PAYLOAD}}.{{PAYLOAD}}</methodName>
    <params>
      <param>
-        <value><string>%s</string></value>
+        <value><string>{{PAYLOAD}}</string></value>
      </param>
     <param>
-        <value><string>%s</string></value>
+        <value><string>{{PAYLOAD}}</string></value>
      </param>
    </params>
 </methodCall>
